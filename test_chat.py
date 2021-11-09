@@ -29,7 +29,9 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_chat_parser_multiple_sentences(self):
-        chat = "14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n14:26:15 Agent : Aliquam non cursus erat, ut blandit lectus."
+        # Note: chat variable contains a single string, this format is used for readability.
+        chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+                "14:26:15 Agent : Aliquam non cursus erat, ut blandit lectus.")
         parsed_chat = chat_parser(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
@@ -41,6 +43,37 @@ class TestChatParser(unittest.TestCase):
             "mention": "14:26:15 Agent : ",
             "sentence": "Aliquam non cursus erat, ut blandit lectus.",
             "type": "agent"
+        }])
+
+    def test_chat_parser_two_customer_mentions_as_start(self):
+        # Note: chat variable contains a single string, this format is used for readability.
+        chat = (
+            "14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
+            "14:27:00 Customer : Pellentesque cursus maximus felis, pharetra porta purus aliquet viverra.\n"
+            "14:27:47 Agent : Vestibulum tempor diam eu leo molestie eleifend.\n"
+            "14:28:28 Customer : Contrary to popular belief, Lorem Ipsum is not simply random text."
+        )
+        parsed_chat = chat_parser(chat)
+        self.assertEqual(parsed_chat, [{
+            "date": '14:24:32',
+            "mention": '14:24:32 Customer : ',
+            "sentence": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n',
+            "type": 'customer'
+        }, {
+            "date": '14:27:00',
+            "mention": '14:27:00 Customer : ',
+            "sentence": 'Pellentesque cursus maximus felis, pharetra porta purus aliquet viverra.\n',
+            "type": 'customer'
+        }, {
+            "date": '14:27:47',
+            "mention": '14:27:47 Agent : ',
+            "sentence": 'Vestibulum tempor diam eu leo molestie eleifend.\n',
+            "type": 'agent'
+        }, {
+            "date": '14:28:28',
+            "mention": '14:28:28 Customer : ',
+            "sentence": 'Contrary to popular belief, Lorem Ipsum is not simply random text.',
+            "type": 'customer'
         }])
 
 

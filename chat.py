@@ -16,4 +16,14 @@ The output should be
 """
 
 def chat_parser(chat):
-    raise NotImplementedError()
+    if chat is None or chat == '':
+        return []
+    parsed_chat = []
+    sentence = {}
+    split_sentence = chat.split(' ')
+    sentence['date'] = split_sentence[0]
+    sentence['mention'] = split_sentence[0] + ' ' + split_sentence[1] + ' : '
+    sentence['sentence'] = ' '.join(split_sentence[3:])
+    sentence['type'] = split_sentence[1].lower()
+    parsed_chat.append(sentence)
+    return parsed_chat

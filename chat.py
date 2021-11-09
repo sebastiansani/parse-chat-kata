@@ -20,12 +20,15 @@ def chat_parser(chat):
         return []
     parsed_chat = []
     for line in chat.splitlines(True):
-        sentence = {}
-        split_sentence = line.split(' ')
-        sentence['date'] = split_sentence[0]
-        sentence['mention'] = split_sentence[0] + ' ' + split_sentence[1] + ' : '
-        sentence['sentence'] = ' '.join(split_sentence[3:])
-        sentence['type'] = split_sentence[1].lower()
-        parsed_chat.append(sentence)
-
+        parsed_line = line_parser(line)
+        parsed_chat.append(parsed_line)
     return parsed_chat
+
+def line_parser(line):
+    parsed_line = {}
+    split_line = line.split(' ')
+    parsed_line['date'] = split_line[0]
+    parsed_line['mention'] = split_line[0] + ' ' + split_line[1] + ' : '
+    parsed_line['sentence'] = ' '.join(split_line[3:])
+    parsed_line['type'] = split_line[1].lower()
+    return parsed_line

@@ -135,7 +135,7 @@ class TestChatParser(unittest.TestCase):
         self.assertEqual(parsed_chat, [{
             "date": '14:24:32',
             "mention": '14:24:32 Luca Galasso : ',
-            "sentence": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            "sentence": 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n',
             "type": 'customer'
         }, {
             "date": '14:26:15',

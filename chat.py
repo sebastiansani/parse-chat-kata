@@ -15,14 +15,24 @@ The output should be
 }]
 """
 
+import re
+
+
 def chat_parser(chat):
     if chat is None or chat == '':
         return []
     parsed_chat = []
-    for line in chat.splitlines(True):
+    if '\n' in chat:
+        split_chat = chat.splitlines(True)
+    else:
+        split_chat_with_separators = re.split(
+            r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9])', chat)
+        split_chat = [split_chat_with_separators[i] + split_chat_with_separators[i+1] for i in range(1, len(split_chat_with_separators)-1, 2)]
+    for line in split_chat:
         parsed_line = line_parser(line)
         parsed_chat.append(parsed_line)
     return parsed_chat
+
 
 def line_parser(line):
     parsed_line = {}

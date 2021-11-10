@@ -23,6 +23,7 @@ The output is a list of dictionaries, each in the following format:
 """
 
 import re
+import sys
 
 
 class ChatParser:
@@ -36,9 +37,11 @@ class ChatParser:
             return []
         parsed_chat = []
         if '\n' in chat:
-            split_chat = chat.splitlines(True) # Split chat by newline and keep newline character
+            # Split chat by newline and keep newline character
+            split_chat = chat.splitlines(True)
         else:
-            split_chat = ChatParser.split_dates(chat) # Split chat by dates and keep dates
+            # Split chat by dates and keep dates
+            split_chat = ChatParser.split_dates(chat)
         customer_name = ChatParser.get_customer_name(split_chat[0])
         for line in split_chat:
             parsed_line = ChatParser.parse_line(line, customer_name)
@@ -62,7 +65,7 @@ class ChatParser:
         line_regex = r"((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w\s]+) : )(.+\n*))|((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w]+) )(.+\n*))"
         line_elements = re.search(line_regex, line)
         clean_line_elements = [x for x in line_elements.groups() if x !=
-                               '' and x != None] # Removes empty elements
+                               '' and x != None]  # Removes empty elements
         return clean_line_elements
 
     @staticmethod
@@ -71,12 +74,21 @@ class ChatParser:
         date_splitter_regex = r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w\s]+ :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w]+ )'
         split_chat_with_separators = re.split(date_splitter_regex, chat)
         clean_split_chat_with_separators = [
-            x for x in split_chat_with_separators if x != '' and x != None] # Removes empty elements
+            x for x in split_chat_with_separators if x != '' and x != None]  # Removes empty elements
         split_chat = [clean_split_chat_with_separators[i] + clean_split_chat_with_separators[i+1]
-                      for i in range(0, len(clean_split_chat_with_separators)-1, 2)] # Couples separators and messages
+                      for i in range(0, len(clean_split_chat_with_separators)-1, 2)]  # Couples separators and messages
         return split_chat
 
     @staticmethod
     def get_customer_name(customer_line):
         """Extracts customer name from a single line sent by the customer"""
         return ChatParser.get_line_elements(customer_line)[3]
+
+
+if __name__ == '__main__':
+    try:
+        chat = sys.argv[1]
+        print(ChatParser.parse_chat(chat))
+    except IndexError:
+        print('Please provide a chat string as argument')
+        sys.exit(1)

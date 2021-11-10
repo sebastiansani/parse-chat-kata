@@ -93,6 +93,23 @@ class TestChatParser(unittest.TestCase):
             "type": "agent"
         }])
 
+    def test_chat_parser_ignore_extra_dates(self):
+        # Note: chat variable contains a single string, this format is used for readability.
+        chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                "14:26:15 Agent : I received it at 12:24:48, ut blandit lectus.")
+        parsed_chat = chat_parser(chat)
+        self.assertEqual(parsed_chat, [{
+            "date": "14:24:32",
+            "mention": "14:24:32 Customer : ",
+            "sentence": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+            "type": "customer"
+        }, {
+            "date": "14:26:15",
+            "mention": "14:26:15 Agent : ",
+            "sentence": "I received it at 12:24:48, ut blandit lectus.",
+            "type": "agent"
+        }])
+
 
 if __name__ == "__main__":
     unittest.main()

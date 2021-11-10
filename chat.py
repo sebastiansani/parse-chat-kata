@@ -26,9 +26,11 @@ def chat_parser(chat):
         split_chat = chat.splitlines(True)
     else:
         split_chat_with_separators = re.split(
-            r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [A-Za-z\s]+ :)', chat)
-        split_chat = [split_chat_with_separators[i] + split_chat_with_separators[i+1] for i in range(1, len(split_chat_with_separators)-1, 2)]
-    customer_name = re.search(r"^[0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([A-Za-z\s]+) :", split_chat[0]).group(1)
+            r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w\s]+ :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w]+ )', chat)
+        split_chat_with_separators = [x for x in split_chat_with_separators if x != '' and x != None]
+        split_chat = [split_chat_with_separators[i] + split_chat_with_separators[i+1] for i in range(0, len(split_chat_with_separators)-1, 2)]
+    customer_name_match_obj = re.search(r"([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w\s]+) :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w]+) )", split_chat[0])
+    customer_name = customer_name_match_obj.group(2) if customer_name_match_obj.group(1) != None else customer_name_match_obj.group(4)
     for line in split_chat:
         parsed_line = line_parser(line, customer_name)
         parsed_chat.append(parsed_line)
@@ -37,9 +39,10 @@ def chat_parser(chat):
 
 def line_parser(line, customer_name):
     parsed_line = {}
-    match_obj = re.search(r"^(([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([A-Za-z\s]+) : )(.+\n*)", line)
-    parsed_line['date'] = match_obj.group(2)
-    parsed_line['mention'] = match_obj.group(1)
-    parsed_line['sentence'] = match_obj.group(4)
-    parsed_line['type'] = 'customer' if match_obj.group(3) == customer_name else 'agent'
+    match_obj = re.search(r"((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w\s]+) : )(.+\n*))|((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w]+) )(.+\n*))", line)
+    i = 0 if match_obj.group(1) != None else 5
+    parsed_line['date'] = match_obj.group(3+i)
+    parsed_line['mention'] = match_obj.group(2+i)
+    parsed_line['sentence'] = match_obj.group(5+i)
+    parsed_line['type'] = 'customer' if match_obj.group(4+i) == customer_name else 'agent'
     return parsed_line

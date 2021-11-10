@@ -1,5 +1,5 @@
 """
-Function that parses a chat string to the correct format.
+Class that parses a chat string to the correct format.
 
 Given a list of chat messages as input:
 

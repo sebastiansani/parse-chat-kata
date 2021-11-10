@@ -13,12 +13,15 @@ class TestChatParser(unittest.TestCase):
         pass
 
     def test_chat_parser_returns_a_list(self):
+        """Return type should be a list."""
         self.assertIsInstance(ChatParser.parse_chat(""), list)
 
     def test_chat_parser_empty_string(self):
+        """Empty string should produce empty output."""
         self.assertEqual(ChatParser.parse_chat(""), [])
 
     def test_chat_parser_single_sentence(self):
+        """Whether a single line is correctly formatted."""
         chat = "14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
         parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
@@ -29,6 +32,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_chat_parser_multiple_sentences(self):
+        """Whether multiple lines are correctly formatted."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
                 "14:26:15 Agent : Aliquam non cursus erat, ut blandit lectus.")
@@ -46,6 +50,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_chat_parser_two_customer_mentions_as_start(self):
+        """Whether function works correctly with two customer messages as start."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = (
             "14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
@@ -77,6 +82,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_chat_parser_date_splitting(self):
+        """Whether function works correctly with date splitting."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Agent : Aliquam non cursus erat, ut blandit lectus.")
@@ -94,6 +100,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_chat_parser_ignore_extra_dates(self):
+        """Whether function works correctly with date splitting and extra dates."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Agent : I received it at 12:24:48, ut blandit lectus.")
@@ -111,6 +118,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_chat_parser_full_name_date_separation(self):
+        """Whether function works correctly with date splitting and full names."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Luca Galasso : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Emanuele Querzola : I received the package, ut blandit lectus.")
@@ -128,6 +136,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_chat_parser_full_name_newline_separation(self):
+        """Whether function works correctly with newline splitting and full names."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Luca Galasso : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
                 "14:26:15 Emanuele Querzola : I received the package, ut blandit lectus.")
@@ -145,6 +154,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_missing_colon_after_names_date_separation(self):
+        """Whether function works correctly with date splitting and missing colon."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Agent I received it at 12:24:48, ut blandit lectus.")
@@ -162,6 +172,7 @@ class TestChatParser(unittest.TestCase):
         }])
 
     def test_missing_colon_after_names_newline_separation(self):
+        """Whether function works correctly with newline splitting and missing colon."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
                 "14:26:15 Agent I received it at 12:24:48, ut blandit lectus.")

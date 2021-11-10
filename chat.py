@@ -1,18 +1,25 @@
 """
 Function that parses a chat string to the correct format.
 
-Given the input
+Given a list of chat messages as input:
 
-14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 
-The output should be
+The output is a list of dictionaries, each in the following format:
 
-[{
-  date: '14:24:32',
-  mention: '14:24:32 Customer : ',
-  sentence: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  type: 'customer'
-}]
+    [{
+    date: '14:24:32',
+    mention: '14:24:32 Customer : ',
+    sentence: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    type: 'customer'
+    },
+    {
+    date: '14:24:32',
+    mention: '14:24:32 Customer : ',
+    sentence: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    type: 'customer'
+    }]
 """
 
 import re
@@ -24,13 +31,14 @@ class ChatParser:
 
     @staticmethod
     def parse_chat(chat):
+        """Parses the whole chat"""
         if chat is None or chat == '':
             return []
         parsed_chat = []
         if '\n' in chat:
-            split_chat = chat.splitlines(True)
+            split_chat = chat.splitlines(True) # Split chat by newline and keep newline character
         else:
-            split_chat = ChatParser.split_dates(chat)
+            split_chat = ChatParser.split_dates(chat) # Split chat by dates and keep dates
         customer_name = ChatParser.get_customer_name(split_chat[0])
         for line in split_chat:
             parsed_line = ChatParser.parse_line(line, customer_name)
@@ -39,6 +47,7 @@ class ChatParser:
 
     @staticmethod
     def parse_line(line, customer_name):
+        """Parses a single line"""
         parsed_line = {}
         line_elements = ChatParser.get_line_elements(line)
         parsed_line['mention'] = line_elements[1]
@@ -49,26 +58,25 @@ class ChatParser:
 
     @staticmethod
     def get_line_elements(line):
+        """Separates the elements of a single line such as date and mention in an array"""
         line_regex = r"((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w\s]+) : )(.+\n*))|((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w]+) )(.+\n*))"
         line_elements = re.search(line_regex, line)
         clean_line_elements = [x for x in line_elements.groups() if x !=
-                               '' and x != None]
+                               '' and x != None] # Removes empty elements
         return clean_line_elements
 
     @staticmethod
     def split_dates(chat):
+        """Splits the whole chat by using dates"""
         date_splitter_regex = r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w\s]+ :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w]+ )'
         split_chat_with_separators = re.split(date_splitter_regex, chat)
         clean_split_chat_with_separators = [
-            x for x in split_chat_with_separators if x != '' and x != None]
+            x for x in split_chat_with_separators if x != '' and x != None] # Removes empty elements
         split_chat = [clean_split_chat_with_separators[i] + clean_split_chat_with_separators[i+1]
-                      for i in range(0, len(clean_split_chat_with_separators)-1, 2)]
+                      for i in range(0, len(clean_split_chat_with_separators)-1, 2)] # Couples separators and messages
         return split_chat
 
     @staticmethod
     def get_customer_name(customer_line):
-        customer_name_regex = r"([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w\s]+) :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w]+) )"
-        customer_name_match_obj = re.search(customer_name_regex, customer_line)
-        customer_name = [x for x in customer_name_match_obj.groups()
-                         if x != '' and x != None][1]
-        return customer_name
+        """Extracts customer name from a single line sent by the customer"""
+        return ChatParser.get_line_elements(customer_line)[3]

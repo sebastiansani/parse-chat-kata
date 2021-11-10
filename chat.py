@@ -62,7 +62,7 @@ class ChatParser:
     @staticmethod
     def get_line_elements(line):
         """Separates the elements of a single line such as date and mention in an array"""
-        line_regex = r"((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w\s]+) : )(.+\n*))|((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w]+) )(.+\n*))"
+        line_regex = r"((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) (?:(?:([\w]+\s?[\w]*) : )|(?:([\w]+) )))(.+\n*))"
         line_elements = re.search(line_regex, line)
         clean_line_elements = [x for x in line_elements.groups() if x !=
                                '' and x != None]  # Removes empty elements
@@ -71,7 +71,7 @@ class ChatParser:
     @staticmethod
     def split_dates(chat):
         """Splits the whole chat by using dates"""
-        date_splitter_regex = r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w\s]+ :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w]+ )'
+        date_splitter_regex = r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] (?:(?:[\w]+\s?[\w]* :)|(?:[\w]+ )))'
         split_chat_with_separators = re.split(date_splitter_regex, chat)
         clean_split_chat_with_separators = [
             x for x in split_chat_with_separators if x != '' and x != None]  # Removes empty elements

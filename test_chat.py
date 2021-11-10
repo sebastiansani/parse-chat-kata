@@ -4,7 +4,7 @@ Chat parser tests.
 
 import unittest
 
-from chat import chat_parser
+from chat import ChatParser
 
 
 class TestChatParser(unittest.TestCase):
@@ -13,14 +13,14 @@ class TestChatParser(unittest.TestCase):
         pass
 
     def test_chat_parser_returns_a_list(self):
-        self.assertIsInstance(chat_parser(""), list)
+        self.assertIsInstance(ChatParser.parse_chat(""), list)
 
     def test_chat_parser_empty_string(self):
-        self.assertEqual(chat_parser(""), [])
+        self.assertEqual(ChatParser.parse_chat(""), [])
 
     def test_chat_parser_single_sentence(self):
         chat = "14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Customer : ",
@@ -32,7 +32,7 @@ class TestChatParser(unittest.TestCase):
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
                 "14:26:15 Agent : Aliquam non cursus erat, ut blandit lectus.")
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Customer : ",
@@ -53,7 +53,7 @@ class TestChatParser(unittest.TestCase):
             "14:27:47 Agent : Vestibulum tempor diam eu leo molestie eleifend.\n"
             "14:28:28 Customer : Contrary to popular belief, Lorem Ipsum is not simply random text."
         )
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Customer : ",
@@ -80,7 +80,7 @@ class TestChatParser(unittest.TestCase):
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Agent : Aliquam non cursus erat, ut blandit lectus.")
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Customer : ",
@@ -97,7 +97,7 @@ class TestChatParser(unittest.TestCase):
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Agent : I received it at 12:24:48, ut blandit lectus.")
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Customer : ",
@@ -114,7 +114,7 @@ class TestChatParser(unittest.TestCase):
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Luca Galasso : Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Emanuele Querzola : I received the package, ut blandit lectus.")
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Luca Galasso : ",
@@ -131,7 +131,7 @@ class TestChatParser(unittest.TestCase):
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Luca Galasso : Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
                 "14:26:15 Emanuele Querzola : I received the package, ut blandit lectus.")
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Luca Galasso : ",
@@ -148,7 +148,7 @@ class TestChatParser(unittest.TestCase):
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer Lorem ipsum dolor sit amet, consectetur adipiscing elit."
                 "14:26:15 Agent I received it at 12:24:48, ut blandit lectus.")
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Customer ",
@@ -165,7 +165,7 @@ class TestChatParser(unittest.TestCase):
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
                 "14:26:15 Agent I received it at 12:24:48, ut blandit lectus.")
-        parsed_chat = chat_parser(chat)
+        parsed_chat = ChatParser.parse_chat(chat)
         self.assertEqual(parsed_chat, [{
             "date": "14:24:32",
             "mention": "14:24:32 Customer ",

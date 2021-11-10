@@ -18,31 +18,57 @@ The output should be
 import re
 
 
-def chat_parser(chat):
-    if chat is None or chat == '':
-        return []
-    parsed_chat = []
-    if '\n' in chat:
-        split_chat = chat.splitlines(True)
-    else:
-        split_chat_with_separators = re.split(
-            r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w\s]+ :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w]+ )', chat)
-        split_chat_with_separators = [x for x in split_chat_with_separators if x != '' and x != None]
-        split_chat = [split_chat_with_separators[i] + split_chat_with_separators[i+1] for i in range(0, len(split_chat_with_separators)-1, 2)]
-    customer_name_match_obj = re.search(r"([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w\s]+) :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w]+) )", split_chat[0])
-    customer_name = customer_name_match_obj.group(2) if customer_name_match_obj.group(1) != None else customer_name_match_obj.group(4)
-    for line in split_chat:
-        parsed_line = line_parser(line, customer_name)
-        parsed_chat.append(parsed_line)
-    return parsed_chat
+class ChatParser:
+    def __init__(self):
+        pass
 
+    @staticmethod
+    def parse_chat(chat):
+        if chat is None or chat == '':
+            return []
+        parsed_chat = []
+        if '\n' in chat:
+            split_chat = chat.splitlines(True)
+        else:
+            split_chat = ChatParser.split_dates(chat)
+        customer_name = ChatParser.get_customer_name(split_chat[0])
+        for line in split_chat:
+            parsed_line = ChatParser.parse_line(line, customer_name)
+            parsed_chat.append(parsed_line)
+        return parsed_chat
 
-def line_parser(line, customer_name):
-    parsed_line = {}
-    match_obj = re.search(r"((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w\s]+) : )(.+\n*))|((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w]+) )(.+\n*))", line)
-    i = 0 if match_obj.group(1) != None else 5
-    parsed_line['date'] = match_obj.group(3+i)
-    parsed_line['mention'] = match_obj.group(2+i)
-    parsed_line['sentence'] = match_obj.group(5+i)
-    parsed_line['type'] = 'customer' if match_obj.group(4+i) == customer_name else 'agent'
-    return parsed_line
+    @staticmethod
+    def parse_line(line, customer_name):
+        parsed_line = {}
+        line_elements = ChatParser.get_line_elements(line)
+        parsed_line['mention'] = line_elements[1]
+        parsed_line['date'] = line_elements[2]
+        parsed_line['type'] = 'customer' if line_elements[3] == customer_name else 'agent'
+        parsed_line['sentence'] = line_elements[4]
+        return parsed_line
+
+    @staticmethod
+    def get_line_elements(line):
+        line_regex = r"((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w\s]+) : )(.+\n*))|((([0-9][0-9]:[0-9][0-9]:[0-9][0-9]) ([\w]+) )(.+\n*))"
+        line_elements = re.search(line_regex, line)
+        clean_line_elements = [x for x in line_elements.groups() if x !=
+                               '' and x != None]
+        return clean_line_elements
+
+    @staticmethod
+    def split_dates(chat):
+        date_splitter_regex = r'([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w\s]+ :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] [\w]+ )'
+        split_chat_with_separators = re.split(date_splitter_regex, chat)
+        clean_split_chat_with_separators = [
+            x for x in split_chat_with_separators if x != '' and x != None]
+        split_chat = [clean_split_chat_with_separators[i] + clean_split_chat_with_separators[i+1]
+                      for i in range(0, len(clean_split_chat_with_separators)-1, 2)]
+        return split_chat
+
+    @staticmethod
+    def get_customer_name(customer_line):
+        customer_name_regex = r"([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w\s]+) :)|([0-9][0-9]:[0-9][0-9]:[0-9][0-9] ([\w]+) )"
+        customer_name_match_obj = re.search(customer_name_regex, customer_line)
+        customer_name = [x for x in customer_name_match_obj.groups()
+                         if x != '' and x != None][1]
+        return customer_name

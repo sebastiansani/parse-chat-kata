@@ -153,7 +153,7 @@ class TestChatParser(unittest.TestCase):
             "type": "agent"
         }])
 
-    def test_missing_colon_after_names_date_separation(self):
+    def test_chat_parser_missing_colon_after_names_date_separation(self):
         """Whether function works correctly with date splitting and missing colon."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -171,7 +171,7 @@ class TestChatParser(unittest.TestCase):
             "type": "agent"
         }])
 
-    def test_missing_colon_after_names_newline_separation(self):
+    def test_chat_parser_missing_colon_after_names_newline_separation(self):
         """Whether function works correctly with newline splitting and missing colon."""
         # Note: chat variable contains a single string, this format is used for readability.
         chat = ("14:24:32 Customer Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n"
